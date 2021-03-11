@@ -1,0 +1,192 @@
+fileFormatVersion: 2
+guid: 074c90c04e8a840b7ac0c368555d0237
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Bone Centre 1
+    100002: Bone Centre 2
+    100004: Bone Centre End
+    100006: Bone Centre Rear 1 Skin
+    100008: Bone Glider Root
+    100010: Bone Glider Wing
+    100012: Bone Glider Wing 2 Skin
+    100014: Bone Glider Wing Left 1 Skin
+    100016: Bone Glider Wing Left 2 Skin
+    100018: Bone Glider Wing Left 3 Skin
+    100020: Bone Glider Wing Right 2 Skin
+    100022: Bone Glider Wing Right 3 Skin
+    100024: Bone Glider Wing Right1 Skin
+    100026: Bone Glider Wing Skin
+    100028: Bone Handglider Middle
+    100030: Bone Handglider Wing Left 1
+    100032: Bone Handglider Wing Left 2
+    100034: Bone Handglider Wing Left End
+    100036: Bone Handglider Wing Right 1
+    100038: Bone Handglider Wing Right 2
+    100040: Bone Handglider Wing Right End
+    100042: Bone Handle Bar Left 1 Skin
+    100044: Bone Handle Bar Left 2 Skin
+    100046: Bone Handle Bar Left 3 Skin
+    100048: Bone Handle Bar Left 4 Skin
+    100050: Bone Handle Bar Right 1 Skin
+    100052: Bone Handle Bar Right 2 Skin
+    100054: Bone Handle Bar Right 3 Skin
+    100056: Bone Handle Bar Right 4 Skin
+    100058: Bone Handlebar Left 1
+    100060: Bone Handlebar Left 2
+    100062: Bone Handlebar Left 3
+    100064: Bone Handlebar Left End
+    100066: Bone Handlebar Right 1
+    100068: Bone Handlebar Right 2
+    100070: Bone Handlebar Right 3
+    100072: Bone Handlebar Right End
+    100074: Bone Handlebar Right Left
+    100076: Bone Handlebar Right Root
+    100078: Bone Rear 1
+    100080: Bone Rear 2
+    100082: Bone Root Point
+    100084: Bone Wing 1 Skin
+    100086: Dummy Glider
+    100088: HandgliderA
+    100090: //RootNode
+    400000: Bone Centre 1
+    400002: Bone Centre 2
+    400004: Bone Centre End
+    400006: Bone Centre Rear 1 Skin
+    400008: Bone Glider Root
+    400010: Bone Glider Wing
+    400012: Bone Glider Wing 2 Skin
+    400014: Bone Glider Wing Left 1 Skin
+    400016: Bone Glider Wing Left 2 Skin
+    400018: Bone Glider Wing Left 3 Skin
+    400020: Bone Glider Wing Right 2 Skin
+    400022: Bone Glider Wing Right 3 Skin
+    400024: Bone Glider Wing Right1 Skin
+    400026: Bone Glider Wing Skin
+    400028: Bone Handglider Middle
+    400030: Bone Handglider Wing Left 1
+    400032: Bone Handglider Wing Left 2
+    400034: Bone Handglider Wing Left End
+    400036: Bone Handglider Wing Right 1
+    400038: Bone Handglider Wing Right 2
+    400040: Bone Handglider Wing Right End
+    400042: Bone Handle Bar Left 1 Skin
+    400044: Bone Handle Bar Left 2 Skin
+    400046: Bone Handle Bar Left 3 Skin
+    400048: Bone Handle Bar Left 4 Skin
+    400050: Bone Handle Bar Right 1 Skin
+    400052: Bone Handle Bar Right 2 Skin
+    400054: Bone Handle Bar Right 3 Skin
+    400056: Bone Handle Bar Right 4 Skin
+    400058: Bone Handlebar Left 1
+    400060: Bone Handlebar Left 2
+    400062: Bone Handlebar Left 3
+    400064: Bone Handlebar Left End
+    400066: Bone Handlebar Right 1
+    400068: Bone Handlebar Right 2
+    400070: Bone Handlebar Right 3
+    400072: Bone Handlebar Right End
+    400074: Bone Handlebar Right Left
+    400076: Bone Handlebar Right Root
+    400078: Bone Rear 1
+    400080: Bone Rear 2
+    400082: Bone Root Point
+    400084: Bone Wing 1 Skin
+    400086: Dummy Glider
+    400088: HandgliderA
+    400090: //RootNode
+    4300000: HandgliderA
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: HandgliderA
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #4'
+    second: {fileID: 2100000, guid: cc9738605d27ef6448c10a7b4470ed07, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.00385
+    meshCompression: 2
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 2
+    tangentImportMode: 2
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 2
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
