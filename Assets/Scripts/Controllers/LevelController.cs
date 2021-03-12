@@ -14,7 +14,7 @@ namespace GliderBoy.Controllers
 
         private const float PIPE_HEIGHT = 0.8887f;
         private const float SCREEN_HEIGHT = 9.0f;
-        private const float MINIMUM_GAP = 2.5f;
+        private const float MINIMUM_GAP = 2.4f;
 
         #endregion
 
@@ -26,16 +26,29 @@ namespace GliderBoy.Controllers
         {
             private readonly Transform _pipe;
             private readonly bool _onBottom;
+            private readonly bool _isSingle;
 
-            public Pipe(Transform pipe, bool onBottom)
+            public Pipe(Transform pipe, bool onBottom, bool isSingle = false)
             {
                 _pipe = pipe;
                 _onBottom = onBottom;
+                _isSingle = isSingle;
             }
 
-            public void Move(float speed) => _pipe.Translate(Vector3.left * speed * Time.deltaTime);
+            public void SetYPosition(float yPosition)
+            {
+                _pipe.position = _pipe.position.WithY(yPosition);
+
+                if (_onBottom) return;
+                var localScale = _pipe.localScale;
+                _pipe.localScale = localScale.WithY(-localScale.y);
+            }
+            
+            public void Move(float speed) => _pipe.position += Vector3.left * speed * Time.deltaTime;
             public float Position() => _pipe.position.x;
+            public void MakeDiagonal(float angle) => _pipe.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             public bool OnBottom() => _onBottom;
+            public bool IsSingle() => _isSingle;
             public void Destroy() => Object.Destroy(_pipe.gameObject);
         }
         
@@ -47,12 +60,19 @@ namespace GliderBoy.Controllers
             [Tooltip("Number of pipes needed to have passed before enabling this difficulty.")]
             public int pipesPassed = 0;
 
-            [Tooltip("The speed at which the pipes will travel.")] 
+            [Space, Tooltip("The speed at which the pipes will travel.")] 
             public float pipeSpeed = 3.0f;
             [Tooltip("Minimum gap is 2.5, anything lower will result in the player not fitting.")]
             public Vector2 gapRange = new Vector2(2.5f, 3.0f);
             [Tooltip("Time between pipe spawns (in sec).")]
             public float spawnTimer = 2.0f;
+            
+            [Space, Tooltip("Whether the pipe will spawn at an angle.")] 
+            public bool diagonal;
+            [Tooltip("The angle of the pipe.")] 
+            public float angle = 25f;
+            [Tooltip("The offset of the pipe on the y axis.")] 
+            public float yOffset = 0.25f;
         }
 
         #endregion
@@ -97,12 +117,12 @@ namespace GliderBoy.Controllers
         public string currentDifficulty = "";
 
         [Space(10f)]
-        [SerializeField, Range(0, 5)] private float screenTop = 4.46f;
-        [SerializeField, Range(-5, 0)] private float screenBottom = -3.58f;
+        [SerializeField, Range(0, 10)] private float screenTop = 4.46f;
+        [SerializeField, Range(-10, 0)] private float screenBottom = -3.58f;
         
         [Space(10f)]
-        [SerializeField, Range(0, 10)] private float spawnPoint = 8;
-        [SerializeField, Range(-10, 0)] private float destroyPoint = -8;
+        [SerializeField, Range(0, 15)] private float spawnPoint = 8;
+        [SerializeField, Range(-15, 0)] private float destroyPoint = -8;
 
         [Space(10f)]
         [SerializeField] private List<Difficult> difficulties = new List<Difficult>();
@@ -112,6 +132,9 @@ namespace GliderBoy.Controllers
         private Vector2 _pipeSpawnTimer;
         private int _pipesPassed;
         private float _gapSize;
+        private bool _diagonal;
+        private float _angle;
+        private float _yOffset;
         private List<Pipe> _pipes = new List<Pipe>(); 
         
         public event Action OnScore;
@@ -155,8 +178,9 @@ namespace GliderBoy.Controllers
         /// <param name="position">The position of the pipes on the x axis.</param>
         /// <param name="height">The height of the pipe.</param>
         /// <param name="onBottom">Is this pipe on the bottom of the screen?</param>
+        /// <param name="isSingle">Is this *top* pipe alone? (Bottom pipe was not spawned).</param>
         
-        private void GenerateSinglePipe(float position, float height, bool onBottom)
+        private Pipe GenerateSinglePipe(float position, float height, bool onBottom, bool isSingle = false)
         {
             // Instantiate two pipe object.
             var body = Instantiate(AssetController.Instance.pipeBody).transform;
@@ -166,24 +190,17 @@ namespace GliderBoy.Controllers
             body.localScale = body.localScale.WithY(height);
             head.position = Vector3.zero.WithY((PIPE_HEIGHT * height) - 0.4f);
 
-            // Set the head as a child to the body and reposition the body along the x axis. 
+            // Set the head as a child to the body.
             head.SetParent(body);
-            body.position = new Vector3(position, screenBottom);
             
             // Rescale the body (and childed head) and parent it to this game object for organisation.
             var width = Random.Range(_pipeWidth.x, _pipeWidth.y);
+            body.position = Vector3.right * position;
             body.localScale = body.localScale.WithX(width).WithZ(width);
             body.SetParent(transform);
-
-            // Add the newly created pipe to the list of pipes.
-            _pipes.Add(new Pipe(body, onBottom));
             
-            // If the pipe is located on the bottom of the screen, return.
-            if (onBottom) return;
-
-            // Else, flip the body scale on the y axis and reposition it to the top of the screen.
-            body.position = body.position.WithY(screenTop);
-            body.localScale = body.localScale.WithY(-body.localScale.y);
+            // Return the pipe.
+            return new Pipe(body, onBottom, isSingle);
         }
 
         /// <summary>
@@ -195,8 +212,26 @@ namespace GliderBoy.Controllers
         
         private void GenerateGapPipe(float position, float height, float gap)
         {
-            GenerateSinglePipe(position, height, true);
-            GenerateSinglePipe(position, SCREEN_HEIGHT - height - Mathf.Max(MINIMUM_GAP, gap), false);
+            var bottomPipe = height >= 0;
+            var topHeight = SCREEN_HEIGHT - height - (_diagonal ? gap : Mathf.Max(MINIMUM_GAP, gap));
+            var topPipe = topHeight >= 0;
+            
+            // Add the newly created pipes to the list of pipes.
+            if (bottomPipe)
+            {
+                var pipe = GenerateSinglePipe(position, height, true);
+                pipe.SetYPosition(screenBottom - _yOffset);
+                if(_diagonal) pipe.MakeDiagonal(_angle);
+                _pipes.Add(pipe);
+            }
+
+            if (topPipe)
+            {
+                var pipe = GenerateSinglePipe(position, topHeight, false, !bottomPipe);
+                pipe.SetYPosition(screenTop + _yOffset);
+                if(_diagonal) pipe.MakeDiagonal(-_angle);
+                _pipes.Add(pipe);
+            }
         }
 
         // -------------------------------------------------------------------------------------------------------------
@@ -219,7 +254,7 @@ namespace GliderBoy.Controllers
                 
                 // If after moving, the pipe has now been passed, invoke the score method. 
                 var isPassed = pipe.Position() <= 0;
-                if (!wasPassed && isPassed && pipe.OnBottom())
+                if (!wasPassed && isPassed && (pipe.OnBottom() || pipe.IsSingle()))
                 {
                     OnScore?.Invoke();
                     
@@ -275,6 +310,10 @@ namespace GliderBoy.Controllers
             _pipeSpeed = difficulty.pipeSpeed;
             _gapSize = Random.Range(difficulty.gapRange.x, difficulty.gapRange.y);
             _pipeSpawnTimer.x = difficulty.spawnTimer;
+
+            _diagonal = difficulty.diagonal;
+            _angle = difficulty.angle;
+            _yOffset = difficulty.yOffset;
         }
 
         #endregion
