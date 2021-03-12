@@ -11,6 +11,9 @@ public class BackgroundMovement : MonoBehaviour
     [Serializable]
     public class Background
     {
+        
+        #region Fields
+
         public Transform background;
         public float speed = 5.0f;
         public float removalPoint = -15.329f;
@@ -18,16 +21,22 @@ public class BackgroundMovement : MonoBehaviour
 
         public Transform[] children;
         
+        #endregion
+
+        #region Public Functions
+        
         public void Initialise()
         {
             if (background == null) return;
-            children = background.GetComponentsInChildren<Transform>();
+            
+            children = new Transform[background.childCount];
+            for (var i = 0; i < children.Length; i++) children[i] = background.GetChild(i);
         }
         
         public void Move()
-        { 
-            for(var i = 1; i < children.Length; i++)
-                children[i].Translate(Vector3.left * speed * Time.deltaTime);   
+        {
+            foreach (var child in children)
+                child.Translate(Vector3.left * speed * Time.deltaTime);
         }
 
         public void ChildCheck()
@@ -36,15 +45,14 @@ public class BackgroundMovement : MonoBehaviour
                 if (child.localPosition.x < removalPoint)
                     child.localPosition = Vector3.zero.WithX(replacePoint);
         }
+        
+        #endregion
+        
     }
 
-    
-    
     public Background[] backgrounds;
     private bool _paused;
 
-    
-    
     public void PauseMovement(bool pause) => _paused = pause;
 
     

@@ -3,6 +3,7 @@ using System.Linq;
 using GliderBoy.Utility;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 namespace GliderBoy.Controllers
@@ -101,12 +102,9 @@ namespace GliderBoy.Controllers
             get => _jump;
             set
             {
-                if (!gravityEnabled && value)
-                {
-                    LevelController.Instance.Paused = false;
-                    gravityEnabled = true;
-                }
-
+                // Player is performing their first jump.
+                if (!gravityEnabled && value) OnFirstJump();
+                
                 // If jump is released, allow to jump again.
                 if (_jump && value == false) _canJump = true;
 
@@ -218,6 +216,9 @@ namespace GliderBoy.Controllers
         [SerializeField] private Transform[] characterOverlapPositions;
         [SerializeField] private float gliderRaycastDistance = 1.0f;
         [SerializeField] private Transform gliderRaycastPosition;
+        [SerializeField, Tooltip("Min: 2.5")] private float gliderJumpStrength = 5.0f;
+
+        [Space] public UnityEvent onFirstJump;
 
         private float _jumpButtonHeldDownTimer;
         private bool _canJump;
@@ -285,6 +286,19 @@ namespace GliderBoy.Controllers
         #region Private Functions
 
         /// <summary>
+        /// This function is invoked when the player performs their first jump on a new game.
+        /// </summary>
+        
+        private void OnFirstJump()
+        {
+            LevelController.Instance.Paused = false;
+            GFXAnimator.enabled = false;
+            gravityEnabled = true;
+            
+            onFirstJump.Invoke();
+        }
+        
+        /// <summary>
         /// Handles user input.
         /// </summary>
 
@@ -332,6 +346,7 @@ namespace GliderBoy.Controllers
         private void Die()
         {
             _gameOver = true;
+            GFXAnimator.enabled = true;
             GFXAnimator.SetTrigger($"Fall {Random.Range(1, 4)}");
             GameOver?.Invoke();
         }
@@ -404,11 +419,14 @@ namespace GliderBoy.Controllers
                 // from the extra power to zero.
                 var proportionalJumpPower = Mathf.Lerp(HeldJumpPower, 0f, jumpProgress);
 
-                // Update the gliders euler angles to give a slight nudge (gust of wind) to the glider. (-> 2.5f -> 0.0f). 
-                var localEulerAngles = Glider.localEulerAngles;
-                Glider.localEulerAngles =
-                    localEulerAngles.WithZ(Mathf.Lerp(localEulerAngles.z, jumpProgress <= 0.5f ? 5f : 0f,
-                        jumpProgress));
+                // Update the gliders euler angles to give a slight nudge (gust of wind) to the glider.
+                if (gliderJumpStrength >= 2.5f)
+                {
+                    var localEulerAngles = Glider.localEulerAngles;
+                    Glider.localEulerAngles =
+                        localEulerAngles.WithZ(Mathf.Lerp(localEulerAngles.z, jumpProgress <= 0.5f ? gliderJumpStrength : 0f,
+                            jumpProgress));
+                }
 
                 // Apply the result to the rigidbody as acceleration in an upward fashion.
                 Rigidbody.AddForce((gravityDirection.y < 0 ? Vector3.up : Vector3.down) * proportionalJumpPower,

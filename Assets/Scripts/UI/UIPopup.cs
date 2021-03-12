@@ -55,6 +55,7 @@ namespace GliderBoy.UI
         public void Popup()
         {
             if(!gameObject.activeSelf) gameObject.SetActive(true);
+            
             hide = !hide;
             
             if(hide) OnHideEnter.Invoke();
