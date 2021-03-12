@@ -78,9 +78,19 @@ namespace GliderBoy.Controllers
 
         public Vector3 Velocity
         {
-            get => Rigidbody.velocity;
-            set => Rigidbody.velocity = value;
+            get
+            {
+                _velocity = Rigidbody.velocity; 
+                return _velocity; 
+            }
+            set
+            {
+                _velocity = value;
+                Rigidbody.velocity = _velocity;
+            }
         }
+        // Used to see the velocity in the inspector (Debug Mode). 2018.4.4 does not display RB Values.
+        private Vector3 _velocity; 
         
         /// <summary>
         /// Boolean used to control player jumping.
@@ -105,7 +115,6 @@ namespace GliderBoy.Controllers
             }
         }
         private bool _jump = true;
-
 
         /// <summary>
         /// The height of the first jump. Be aware that if the upward speed is limited, this value may also be limited.
@@ -203,7 +212,7 @@ namespace GliderBoy.Controllers
 
         #region Fields
 
-        [SerializeField] private bool gravityEnabled = false;
+        [SerializeField] private bool gravityEnabled;
         
         [SerializeField] private float characterOverlapRadius = 0.1f;
         [SerializeField] private Transform[] characterOverlapPositions;
@@ -232,6 +241,7 @@ namespace GliderBoy.Controllers
         {
             transform.position = Vector3.zero;
             gravityEnabled = false;
+            Jump = false;
             _paused = false;
             _gameOver = false;
 
@@ -242,7 +252,7 @@ namespace GliderBoy.Controllers
             gliderAnimator.speed = 1;
             
             Rigidbody.constraints = RigidbodyConstraints.None;
-            Rigidbody.velocity = Vector3.zero;
+            Velocity = Vector3.zero;
             Rigidbody.angularVelocity = Vector3.zero;
         }
         
@@ -282,7 +292,8 @@ namespace GliderBoy.Controllers
         {
             // Play jump sound effect.
             if(Input.GetButtonDown("Jump") || Input.GetButtonDown("Fire1")) AudioController.Instance.PlaySound("Whoosh");
-            
+
+            // Jump input.
             Jump = Input.GetButton("Jump") || Input.GetButton("Fire1");
         }
 
@@ -361,9 +372,8 @@ namespace GliderBoy.Controllers
 
             _canJump = false; // Stop the character from jumping again until the jump button has been released.
             IsJumping = true; // Store a boolean to say the character is jumping.
-            _updateJumpTimer =
-                true; // Start the jump timer to provide additional force to the jump when the jump button is held.
-
+            _updateJumpTimer = true; // Start the jump timer to provide additional force to the jump when the jump button is held.
+            
             // Apply an upward impulse to perform the jump.
             Rigidbody.ApplyUpwardImpulse(gravityDirection.y < 0 ? JumpImpulse : -JumpImpulse);
         }
